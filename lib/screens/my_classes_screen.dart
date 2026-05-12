@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// Import ini jangan dihapus, kita akan gunakan 'registeredClasses' di bawah
+
 import '../data/registration_data.dart'; 
 
 class MyClassesScreen extends StatefulWidget {
@@ -12,15 +12,15 @@ class MyClassesScreen extends StatefulWidget {
 class _MyClassesScreenState extends State<MyClassesScreen> {
   @override
   Widget build(BuildContext context) {
-    // Dengan memanggil 'registeredClasses' di sini, 
-    // peringatan "Unused Import" akan otomatis hilang.
+    
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text("Kelas Saya"),
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
         actions: [
-          // Tombol refresh untuk memaksa layar update data
+          
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -38,10 +38,10 @@ class _MyClassesScreenState extends State<MyClassesScreen> {
             )
           : ListView.builder(
               padding: const EdgeInsets.all(12),
-              // Mengambil jumlah data dari file registration_data.dart
+              
               itemCount: registeredClasses.length, 
               itemBuilder: (context, index) {
-                // Mengambil isi data per index
+                
                 final data = registeredClasses[index];
                 
                 return Card(

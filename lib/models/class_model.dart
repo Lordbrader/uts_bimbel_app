@@ -83,5 +83,4 @@ List<BimbelClass> dummyClasses = [
   ),
 ];
 
-// Database sementara untuk pendaftaran
 List<Map<String, String>> myEnrolledClasses = [];

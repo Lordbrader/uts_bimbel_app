@@ -44,7 +44,7 @@ class _MainNavigationState extends State<MainNavigation> {
       backgroundColor: Colors.grey[200],
       body: Center(
         child: Container(
-          width: 450, // Ukuran Frame HP di Web
+          width: 450, 
           height: double.infinity,
           decoration: const BoxDecoration(
             color: Colors.white,

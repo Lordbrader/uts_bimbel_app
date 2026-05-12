@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../main.dart';
-import '../data/user_session.dart'; // Import file penyimpanan
+import '../data/user_session.dart'; 
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
-      // SIMPAN DATA KE SESSION & CETAK KE DEBUG CONSOLE
+      
       UserSession.saveUser(_emailController.text, _passController.text);
 
       showDialog(

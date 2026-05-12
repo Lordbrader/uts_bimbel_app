@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import '../data/user_session.dart'; // Import file penyimpanan
+import '../data/user_session.dart'; 
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -18,12 +18,12 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 15),
             const Text("Mahasiswa Smart Bimbel", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             
-            // MENAMPILKAN DATA DARI SESSION
+            
             Text(UserSession.loggedInEmail ?? "Guest@mail.com", style: const TextStyle(color: Colors.grey)),
             const SizedBox(height: 30),
 
             _buildDetailTile(Icons.email, "Email Terdaftar", UserSession.loggedInEmail ?? "-"),
-            _buildDetailTile(Icons.lock, "Kata Sandi (Hashed)", "********"), // Demi keamanan tampilkan bintang saja
+            _buildDetailTile(Icons.lock, "Kata Sandi (Hashed)", "********"), 
             _buildDetailTile(Icons.security, "Status Akun", "Terverifikasi"),
             
             const SizedBox(height: 40),
@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
                   onPressed: () {
-                    UserSession.clearSession(); // Hapus data saat logout
+                    UserSession.clearSession(); 
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const LoginScreen()));
                   },
                   child: const Text("LOGOUT"),

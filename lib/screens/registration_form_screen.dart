@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// Pastikan import ini sesuai dengan lokasi file data kamu
+
 import '../data/registration_data.dart'; 
 
 class RegistrationFormScreen extends StatefulWidget {
@@ -14,7 +14,7 @@ class RegistrationFormScreen extends StatefulWidget {
 class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
   final TextEditingController _nameController = TextEditingController();
   
-  // Data Master Kelas berdasarkan Jenjang
+  
   final Map<String, List<String>> dataKelasPerJenjang = {
     'SD': [
       'Matematika Dasar', 'Bahasa Indonesia', 'IPA Alam', 'Bahasa Inggris',
@@ -143,7 +143,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_nameController.text.isNotEmpty && selectedClass != null) {
-                    // SIMPAN DATA KE GLOBAL LIST SEBELUM DIALOG
+                    
                     registeredClasses.add({
                       'nama': _nameController.text,
                       'jenjang': selectedJenjang ?? "-",
@@ -194,18 +194,18 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              // HANYA POP SEKALI UNTUK MENUTUP DIALOG
+              
               Navigator.of(context, rootNavigator: true).pop();
               
-              // BERSIHKAN FORM AGAR BISA INPUT LAGI ATAU PINDAH HALAMAN
+              
               setState(() {
                 _nameController.clear();
                 selectedJenjang = null;
                 selectedClass = null;
               });
 
-              // Jika kamu ingin otomatis pindah ke tab "Kelas Saya", 
-              // Kamu bisa menambahkan logika kontroler BottomNav di sini.
+              
+              
             },
             child: const Center(child: Text("OK, MENGERTI", style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold))),
           )
