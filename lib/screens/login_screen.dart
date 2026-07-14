@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
-import '../data/user_session.dart'; 
+import 'package:camera/camera.dart';
+import 'main_navigation_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final CameraDescription? camera;
+
+  const LoginScreen({super.key, this.camera});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -12,66 +14,26 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passController = TextEditingController();
-  bool _isObscure = true;
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscurePassword = true;
 
-  void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
-      
-      UserSession.saveUser(_emailController.text, _passController.text);
+  void _prosesLogin() async {
+    if (!_formKey.currentState!.validate()) return;
 
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(color: Colors.purple),
-        ),
-      );
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 1500));
+    setState(() => _isLoading = false);
 
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pop(context); 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainNavigation()),
-        );
-      });
-    }
-  }
+    if (!mounted) return;
 
-  void _showForgotPasswordDialog(BuildContext context) {
-    final TextEditingController _resetEmail = TextEditingController();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 25, right: 25, top: 25),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Reset Password 🔑", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.purple)),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _resetEmail,
-              decoration: InputDecoration(labelText: "Email", prefixIcon: const Icon(Icons.email_outlined), border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity, height: 55,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
-                onPressed: () {
-                  if (_resetEmail.text.isNotEmpty) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Link reset dikirim ke ${_resetEmail.text}"), backgroundColor: Colors.green));
-                  }
-                },
-                child: const Text("KIRIM", style: TextStyle(color: Colors.white)),
-              ),
-            ),
-            const SizedBox(height: 30),
-          ],
+    // PENTING: Mengirimkan e-mail yang diketik ke MainNavigationScreen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MainNavigationScreen(
+          camera: widget.camera,
+          userEmail: _emailController.text,
         ),
       ),
     );
@@ -80,58 +42,87 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity, height: double.infinity,
-        decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFF6A1B9A), Color(0xFFAD1457)])),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 400),
-              margin: const EdgeInsets.symmetric(horizontal: 25),
-              padding: const EdgeInsets.all(35),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(35)),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.auto_stories_rounded, size: 80, color: Colors.purple),
-                    const SizedBox(height: 10),
-                    const Text("Smart Bimbel", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.purple)),
-                    const SizedBox(height: 40),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(labelText: "Email", prefixIcon: const Icon(Icons.email_outlined), border: OutlineInputBorder(borderRadius: BorderRadius.circular(15))),
-                      validator: (v) => v!.isEmpty ? "Email wajib diisi" : null,
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _passController,
-                      obscureText: _isObscure,
-                      decoration: InputDecoration(
-                        labelText: "Password", prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off), onPressed: () => setState(() => _isObscure = !_isObscure)),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                      ),
-                      validator: (v) => v!.length < 6 ? "Minimal 6 karakter" : null,
-                    ),
-                    Align(alignment: Alignment.centerRight, child: TextButton(onPressed: () => _showForgotPasswordDialog(context), child: const Text("Lupa Password?", style: TextStyle(color: Colors.purple)))),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity, height: 55,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                        onPressed: _handleLogin,
-                        child: const Text("MASUK", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                    ),
-                  ],
+      backgroundColor: const Color(0xFFF8F9FE),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(28.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(Icons.auto_stories_rounded, size: 80, color: const Color(0xFF4A148C)),
+                const SizedBox(height: 16),
+                const Text(
+                  'Bimbel  Modern',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFF4A148C)),
                 ),
-              ),
+                const Text(
+                  'Silakan masuk untuk melanjutkan belajar',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                const SizedBox(height: 40),
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Alamat Email',
+                    prefixIcon: const Icon(Icons.email_rounded, color: Color(0xFF7B1FA2)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Email wajib diisi';
+                    if (!v.contains('@')) return 'Format email tidak valid';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: const Icon(Icons.lock_rounded, color: Color(0xFF7B1FA2)),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded, color: const Color(0xFF7B1FA2)),
+                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  ),
+                  validator: (v) => (v == null || v.length < 6) ? 'Password minimal 6 karakter' : null,
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _prosesLogin,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFF6A1B9A),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 3,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
+                      : const Text('Masuk Sekarang', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

@@ -1,57 +1,87 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import '../data/user_session.dart'; 
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final String userEmail;
+
+  const ProfileScreen({super.key, required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(title: const Text("Profil Saya"), backgroundColor: Colors.purple, foregroundColor: Colors.white),
-      body: SingleChildScrollView(
+      backgroundColor: const Color(0xFFF8F9FE),
+      appBar: AppBar(
+        title: const Text('Profil Saya', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: const Color(0xFF4A148C),
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const SizedBox(height: 30),
-            const CircleAvatar(radius: 60, backgroundColor: Colors.purple, child: Icon(Icons.person, size: 60, color: Colors.white)),
-            const SizedBox(height: 15),
-            const Text("Mahasiswa Smart Bimbel", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            // Avatar Bulat Premium
+            Center(
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: const Color(0xFFE1BEE7),
+                child: const Icon(Icons.person_rounded, size: 60, color: Color(0xFF4A148C)),
+              ),
+            ),
+            const SizedBox(height: 20),
             
-            
-            Text(UserSession.loggedInEmail ?? "Guest@mail.com", style: const TextStyle(color: Colors.grey)),
-            const SizedBox(height: 30),
-
-            _buildDetailTile(Icons.email, "Email Terdaftar", UserSession.loggedInEmail ?? "-"),
-            _buildDetailTile(Icons.lock, "Kata Sandi (Hashed)", "********"), 
-            _buildDetailTile(Icons.security, "Status Akun", "Terverifikasi"),
-            
-            const SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-                  onPressed: () {
-                    UserSession.clearSession(); 
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const LoginScreen()));
-                  },
-                  child: const Text("LOGOUT"),
+            // Detail Informasi Akun
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.email_rounded, color: Color(0xFF7B1FA2)),
+                      title: const Text('Email Aktif', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      // PERBAIKAN DI SINI: Menggunakan Colors.black dengan alpha modern agar tidak eror
+                      subtitle: Text(
+                        userEmail, 
+                        style: TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.bold, 
+                          color: Colors.black.withValues(alpha: 0.85),
+                        ),
+                      ),
+                    ),
+                    const Divider(),
+                    const ListTile(
+                      leading: Icon(Icons.verified_user_rounded, color: Colors.green),
+                      title: Text('Status Akun', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      subtitle: Text('Siswa Terverifikasi', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                    ),
+                  ],
                 ),
               ),
+            ),
+            const SizedBox(height: 40),
+            
+            // Tombol Logout
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(54),
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              icon: const Icon(Icons.logout_rounded, color: Colors.white),
+              label: const Text('Keluar dari Akun', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDetailTile(IconData icon, String title, String value) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.purple),
-      title: Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-      subtitle: Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 }
